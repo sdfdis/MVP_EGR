@@ -1,1 +1,0 @@
-# KZ-Alpha-for-KFF-Yerzhan-
