@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Onest:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="./courses-data.js"></script>
+<script src="./image-slot.js"></script>
+<script src="./form-config.js"></script>
+<style>
+  body { margin:0; background:#FFFFFF; color:#0E1116; font-family:'Space Grotesk',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  a { color:#0E1116; text-decoration:none; }
+  a:hover { color:#B0703F; }
+  input, textarea, select, button { font-family:'Onest',system-ui,sans-serif; }
+  ::selection { background:#E8A274; color:#1A120C; }
+  @keyframes drIn { from { transform:translateX(24px); opacity:0; } to { transform:none; opacity:1; } }
+  @keyframes ovIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes upIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  @keyframes navIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes navBar { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  @keyframes navMark { 0% { opacity:0; transform:translateY(8px); } 100% { opacity:1; transform:none; } }
+  @keyframes pageIn { from { opacity:0; } to { opacity:1; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;animation:pageIn .45s ease both">
+
+<sc-if value="{{ navigating }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;z-index:200;background:#0A0C10;display:grid;place-items:center;animation:navIn .2s ease both">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:22px;animation:navMark .35s cubic-bezier(.2,.85,.3,1) both">
+      <img src="assets/logo-ergdu-white.png" alt="" style="height:34px;width:auto;display:block;opacity:.9">
+      <div style="width:180px;height:2px;background:rgba(233,237,243,.16);overflow:hidden">
+        <div style="width:100%;height:100%;background:#E8A274;transform-origin:left;animation:navBar .5s cubic-bezier(.4,0,.2,1) both"></div>
+      </div>
+      <span style="font-size:13px;letter-spacing:.04em;color:#7A8291">На главную</span>
+    </div>
+  </div>
+</sc-if>
+
+
+<header style="position:sticky;top:0;z-index:60;background:#0D131D;font-family:'Onest',system-ui,sans-serif;border-bottom:1px solid rgba(233,237,243,.1)">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2vw,28px);padding:14px clamp(20px,5vw,72px)">
+    <a href="index.html" style="display:flex;align-items:center;gap:14px;flex:0 0 auto">
+      <img src="assets/logo-ergdu-white.png" alt="Корпоративный университет ERG" style="height:clamp(20px,2vw,26px);width:auto;display:block">
+      <span style="font-size:12px;line-height:1.2;color:#95A1B3;border-left:1px solid rgba(233,237,243,.14);padding-left:12px">Корпоративный<br>университет</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:clamp(8px,1.4vw,18px);flex:0 0 auto">
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;border:1px solid rgba(233,237,243,.28);font-size:14px;font-weight:500;color:#E9EDF3;white-space:nowrap;transition:border-color .2s,background .2s" style-hover="border-color:#E9EDF3;background:rgba(233,237,243,.08)"><span style="font-size:15px">←</span>На главную</a>
+      <button onClick="{{ openDrawer }}" style="position:relative;display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 16px;background:transparent;border:1px solid rgba(233,237,243,.28);border-radius:999px;font-size:14px;color:#E9EDF3;cursor:pointer;transition:border-color .2s" style-hover="border-color:#E9EDF3">
+        Моя заявка
+        <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ 2 }}">
+          <span style="min-width:22px;height:22px;padding:0 6px;display:inline-grid;place-items:center;border-radius:999px;background:#E8A274;color:#1A120C;font-size:12px;font-weight:600">{{ cartCount }}</span>
+        </sc-if>
+      </button>
+      <a href="#/" style="display:inline-flex;align-items:center;height:40px;padding:0 18px;border-radius:999px;background:rgba(233,237,243,.08);font-size:14px;font-weight:500;color:#E9EDF3;white-space:nowrap">Каталог курсов</a>
+    </div>
+  </div>
+</header>
+
+<sc-if value="{{ isCatalog }}" hint-placeholder-val="{{ true }}">
+<main style="flex:1 1 auto">
+  <div style="padding:clamp(36px,5vw,72px) clamp(20px,5vw,72px) clamp(20px,3vw,36px);border-bottom:1px solid rgba(14,17,22,.1)">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;color:#B0703F;text-transform:uppercase">Образовательные решения ERG CU</span>
+    <h1 style="margin:clamp(16px,2vw,24px) 0 0;font-size:clamp(34px,4.4vw,62px);font-weight:600;letter-spacing:-.03em;line-height:1">Каталог курсов</h1>
+    <p style="margin:18px 0 0;max-width:62ch;font-family:'Onest',system-ui,sans-serif;font-size:clamp(15px,1.2vw,18px);line-height:1.55;color:#5A6472;text-wrap:pretty">Программы обучения, аттестации и сертификации для промышленных компаний. Отметьте нужные курсы — они соберутся в одну заявку.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:0">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(24px,3vw,48px);padding:clamp(24px,3vw,44px) clamp(20px,5vw,72px) clamp(56px,7vw,110px)">
+
+      <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openFilters }}" style="flex:1 1 100%;display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 20px;border:1px solid rgba(14,17,22,.2);border-radius:999px;background:#FFFFFF;font-family:'Onest',system-ui,sans-serif;font-size:15px;font-weight:500;color:#0E1116;cursor:pointer">
+          Фильтры
+          <sc-if value="{{ activeCount }}" hint-placeholder-val="{{ 0 }}">
+            <span style="min-width:22px;height:22px;padding:0 6px;display:inline-grid;place-items:center;border-radius:999px;background:#B0703F;color:#FFFFFF;font-size:12px;font-weight:600">{{ activeCount }}</span>
+          </sc-if>
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ showAside }}" hint-placeholder-val="{{ true }}">
+      <aside style="{{ asideStyle }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px">
+          <span style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8A94A3;font-family:'IBM Plex Mono',monospace">Фильтры</span>
+          <div style="display:flex;align-items:center;gap:14px">
+            <button onClick="{{ resetFilters }}" style="background:transparent;border:none;padding:0;font-size:13px;color:#B0703F;cursor:pointer;border-bottom:1px solid rgba(176,112,63,.35)">Сбросить</button>
+            <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ closeFilters }}" style="width:34px;height:34px;display:grid;place-items:center;background:transparent;border:1px solid rgba(14,17,22,.16);border-radius:999px;font-size:14px;cursor:pointer">✕</button>
+            </sc-if>
+          </div>
+        </div>
+        <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Поиск по названию" style="width:100%;height:44px;padding:0 14px;border:1px solid rgba(14,17,22,.16);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+        <a href="#/custom" style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:9px;height:46px;border-radius:6px;background:#B0703F;color:#FFFFFF;font-size:14px;font-weight:600;transition:background .2s" style-hover="background:#C4814C">Заказать разработку курса →</a>
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="6">
+          <div style="margin-top:26px;padding-top:20px;border-top:1px solid rgba(14,17,22,.08)">
+            <button onClick="{{ g.toggleGroup }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:0;background:transparent;border:none;text-align:left;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#0E1116">
+              <span style="flex:1 1 auto;min-width:0">{{ g.name }}</span>
+              <sc-if value="{{ g.pickedCount }}" hint-placeholder-val="{{ 0 }}">
+                <span style="flex:0 0 auto;min-width:20px;height:20px;padding:0 6px;display:inline-grid;place-items:center;border-radius:999px;background:#B0703F;color:#FFFFFF;font-size:11px;font-weight:600">{{ g.pickedCount }}</span>
+              </sc-if>
+              <span style="flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;font-size:14px;color:#8A94A3;line-height:1">{{ g.chevron }}</span>
+            </button>
+            <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ g.items }}" as="o" hint-placeholder-count="4">
+                <button onClick="{{ o.toggle }}" style="display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;padding:0;text-align:left;cursor:pointer;color:#3C4553;font-size:14px;line-height:1.35;transition:color .2s" style-hover="color:#0E1116">
+                  <span style="flex:0 0 auto;width:16px;height:16px;border:1px solid rgba(14,17,22,.28);border-radius:3px;display:grid;place-items:center;font-size:11px;color:#B0703F;line-height:1">
+                    <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">✓</sc-if>
+                  </span>
+                  <span style="flex:1 1 auto;min-width:0">{{ o.label }}</span>
+                  <span style="flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#A3ADBB">{{ o.count }}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ g.hasMore }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ g.toggleMore }}" style="align-self:flex-start;margin-top:2px;background:transparent;border:none;padding:0;font-size:13px;color:#B0703F;cursor:pointer;border-bottom:1px solid rgba(176,112,63,.35)">{{ g.moreLabel }}</button>
+              </sc-if>
+            </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ closeFilters }}" style="margin-top:28px;width:100%;height:50px;border:none;border-radius:6px;background:#0E1116;color:#FFFFFF;font-family:'Onest',system-ui,sans-serif;font-size:16px;font-weight:600;cursor:pointer">Показать {{ foundCount }}</button>
+        </sc-if>
+      </aside>
+      </sc-if>
+
+      <div style="flex:1 1 520px;min-width:0">
+        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:clamp(18px,2vw,28px);font-family:'Onest',system-ui,sans-serif">
+          <span style="font-size:15px;color:#5A6472">Найдено программ: <strong style="color:#0E1116;font-weight:600">{{ foundCount }}</strong></span>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:#5A6472">
+            <span>Сортировка</span>
+            <select value="{{ sort }}" onChange="{{ onSort }}" style="height:38px;padding:0 10px;border:1px solid rgba(14,17,22,.16);border-radius:6px;background:#FFFFFF;font-size:14px;color:#0E1116;cursor:pointer">
+              <option value="default">по каталогу</option>
+              <option value="priceAsc">цена: сначала дешевле</option>
+              <option value="priceDesc">цена: сначала дороже</option>
+              <option value="hours">длительность</option>
+              <option value="title">название</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(14px,1.6vw,22px)">
+          <sc-for list="{{ list }}" as="c" hint-placeholder-count="9">
+            <article onClick="{{ c.open }}" style="position:relative;display:flex;flex-direction:column;border:1px solid rgba(14,17,22,.12);background:#FFFFFF;cursor:pointer;transition:border-color .25s,box-shadow .25s,transform .25s" style-hover="border-color:rgba(14,17,22,.3);box-shadow:0 18px 40px rgba(14,17,22,.08);transform:translateY(-3px)">
+              <sc-if value="{{ edit }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ c.del }}" title="Удалить курс" style="position:absolute;top:10px;right:10px;z-index:3;width:30px;height:30px;border:none;border-radius:999px;background:rgba(14,17,22,.78);color:#FFFFFF;font-size:14px;line-height:1;cursor:pointer">✕</button>
+              </sc-if>
+              <div style="padding:clamp(18px,2vw,24px);display:flex;flex-direction:column;flex:1 1 auto;font-family:'Onest',system-ui,sans-serif">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#B0703F;line-height:1.3">{{ c.category }}</span>
+                <h3 style="margin:12px 0 0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:19px;font-weight:600;letter-spacing:-.015em;line-height:1.25;text-wrap:pretty">
+                  <a href="{{ c.href }}">{{ c.title }}</a>
+                </h3>
+                <p style="margin:10px 0 0;font-size:14px;line-height:1.5;color:#5A6472;text-wrap:pretty">{{ c.short }}</p>
+                <div style="margin:16px 0 0;display:flex;flex-wrap:wrap;gap:6px">
+                  <span style="padding:5px 9px;border:1px solid rgba(14,17,22,.14);border-radius:4px;font-size:12px;color:#3C4553">{{ c.formatGroup }}</span>
+                  <span style="padding:5px 9px;border:1px solid rgba(14,17,22,.14);border-radius:4px;font-size:12px;color:#3C4553">{{ c.durLabel }}</span>
+                </div>
+                <div style="margin-top:auto;padding-top:20px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                  <span style="font-size:15px;font-weight:600;color:#0E1116;white-space:nowrap">{{ c.priceLabel }}</span>
+                  <sc-if value="{{ c.inCart }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ c.toggle }}" style="display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border:1px solid #B0703F;border-radius:999px;background:#B0703F;color:#FFFFFF;font-size:14px;font-weight:500;cursor:pointer">✓ В заявке</button>
+                  </sc-if>
+                  <sc-if value="{{ c.notInCart }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ c.toggle }}" style="display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 15px;border:1px solid rgba(14,17,22,.2);border-radius:999px;background:transparent;color:#0E1116;font-size:14px;font-weight:500;cursor:pointer;transition:border-color .2s,background .2s" style-hover="border-color:#B0703F;background:rgba(176,112,63,.06)">+ В заявку</button>
+                  </sc-if>
+                </div>
+              </div>
+            </article>
+          </sc-for>
+          <sc-if value="{{ showCustomCard }}" hint-placeholder-val="{{ true }}">
+          <a href="#/custom" style="display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:clamp(20px,2.2vw,26px);background:#0D131D;color:#E9EDF3;border:1px solid #0D131D;font-family:'Onest',system-ui,sans-serif;transition:background .25s,transform .25s" style-hover="background:#141D2B;transform:translateY(-3px)">
+            <div>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#E8A274">Под задачу заказчика</span>
+              <h3 style="margin:12px 0 0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:19px;font-weight:600;letter-spacing:-.015em;line-height:1.25;color:#FFFFFF;text-wrap:pretty">Разработка курса под заказ</h3>
+              <p style="margin:10px 0 0;font-size:14px;line-height:1.5;color:#95A1B3;text-wrap:pretty">Не нашли нужную программу? Спроектируем обучение под ваши процессы, оборудование и уровень подготовки участников.</p>
+              <div style="margin:18px 0 0;display:flex;flex-direction:column;gap:7px;font-size:13px;color:#C3CBD6">
+                <span>Анализ потребности и целей</span>
+                <span>Программа, материалы, оценка результата</span>
+                <span>Внутренние эксперты ERG и внешние партнёры</span>
+              </div>
+            </div>
+            <span style="display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 18px;align-self:flex-start;border-radius:999px;background:#E8A274;color:#1A120C;font-size:14px;font-weight:600">Обсудить задачу →</span>
+          </a>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:clamp(40px,6vw,80px) 0;text-align:center;font-family:'Onest',system-ui,sans-serif">
+            <div style="font-size:18px;font-weight:600">Ничего не найдено</div>
+            <p style="margin:10px 0 20px;font-size:15px;color:#5A6472">Попробуйте снять часть фильтров или изменить запрос.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+              <button onClick="{{ resetFilters }}" style="height:44px;padding:0 20px;border:1px solid #0E1116;border-radius:999px;background:transparent;font-size:15px;cursor:pointer">Сбросить фильтры</button>
+              <a href="#/custom" style="display:inline-flex;align-items:center;height:44px;padding:0 20px;border-radius:999px;background:#0E1116;color:#FFFFFF;font-size:15px;font-weight:500">Заказать разработку курса</a>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isCourse }}" hint-placeholder-val="{{ false }}">
+<main style="flex:1 1 auto;font-family:'Onest',system-ui,sans-serif;animation:upIn .35s ease both">
+  <div style="background:#0D131D;color:#E9EDF3;padding:clamp(24px,3vw,40px) clamp(20px,5vw,72px) clamp(36px,5vw,64px)">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:18px">
+      <a href="#/" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#95A1B3">← Каталог курсов</a>
+      <a href="index.html" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#95A1B3">← На главную</a>
+    </div>
+    <div style="margin-top:clamp(20px,3vw,34px);display:flex;flex-wrap:wrap;gap:clamp(24px,4vw,56px);align-items:flex-start">
+      <div style="flex:1 1 520px;min-width:0">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#E8A274">{{ course.category }}</span>
+        <h1 style="margin:14px 0 0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(28px,3.4vw,46px);font-weight:600;letter-spacing:-.025em;line-height:1.1;max-width:24ch;text-wrap:pretty">{{ course.title }}</h1>
+        <p style="margin:16px 0 0;font-size:clamp(15px,1.2vw,17px);line-height:1.55;color:#AEB8C6;max-width:70ch;text-wrap:pretty">{{ course.fullTitle }}</p>
+        <div style="margin-top:clamp(22px,3vw,32px);display:flex;flex-wrap:wrap;gap:10px">
+          <span style="padding:8px 13px;border:1px solid rgba(233,237,243,.2);border-radius:999px;font-size:13px;color:#E9EDF3">{{ course.formatGroup }}</span>
+          <span style="padding:8px 13px;border:1px solid rgba(233,237,243,.2);border-radius:999px;font-size:13px;color:#E9EDF3">{{ course.durLabel }}</span>
+          <sc-if value="{{ course.hasCities }}" hint-placeholder-val="{{ true }}">
+            <span style="padding:8px 13px;border:1px solid rgba(233,237,243,.2);border-radius:999px;font-size:13px;color:#E9EDF3">{{ course.cityLabel }}</span>
+          </sc-if>
+          <span style="padding:8px 13px;border:1px solid rgba(232,162,116,.4);border-radius:999px;font-size:13px;color:#E8A274">{{ course.priceLabel }}</span>
+        </div>
+        <div style="margin-top:clamp(24px,3vw,34px);display:flex;flex-wrap:wrap;gap:12px">
+          <sc-if value="{{ course.inCart }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ course.toggle }}" style="height:48px;padding:0 24px;border:1px solid #E8A274;border-radius:6px;background:#E8A274;color:#1A120C;font-size:15px;font-weight:600;cursor:pointer">✓ Добавлено в заявку</button>
+          </sc-if>
+          <sc-if value="{{ course.notInCart }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ course.toggle }}" style="height:48px;padding:0 24px;border:1px solid #E8A274;border-radius:6px;background:#E8A274;color:#1A120C;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" style-hover="background:#F1B58C">Добавить в заявку</button>
+          </sc-if>
+          <a href="#/request" style="display:inline-flex;align-items:center;height:48px;padding:0 24px;border:1px solid rgba(233,237,243,.28);border-radius:6px;color:#E9EDF3;font-size:15px;font-weight:500">Перейти к заявке</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ editCourse }}" hint-placeholder-val="{{ false }}">
+  <div style="background:#FBF7F3;border-bottom:1px solid rgba(176,112,63,.3);padding:clamp(24px,3vw,40px) clamp(20px,5vw,72px);font-family:'Onest',system-ui,sans-serif">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+      <div style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(20px,2vw,26px);font-weight:600;letter-spacing:-.02em;color:#0E1116">Редактирование курса</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onClick="{{ ed.reset }}" style="height:38px;padding:0 16px;border:1px solid rgba(14,17,22,.2);border-radius:6px;background:transparent;font-family:inherit;font-size:13px;color:#3C4553;cursor:pointer">Вернуть исходное</button>
+        <button onClick="{{ ed.remove }}" style="height:38px;padding:0 16px;border:1px solid rgba(176,112,63,.5);border-radius:6px;background:transparent;font-family:inherit;font-size:13px;color:#B0703F;cursor:pointer">Удалить курс</button>
+      </div>
+    </div>
+    <div style="margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px">
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Название
+        <input value="{{ ed.v.title }}" onChange="{{ ed.setTitle }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Полное название
+        <input value="{{ ed.v.fullTitle }}" onChange="{{ ed.setFullTitle }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Категория
+        <select value="{{ ed.v.category }}" onChange="{{ ed.setCategory }}" style="height:44px;padding:0 10px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;cursor:pointer;outline:none">
+          <sc-for list="{{ ed.catOptions }}" as="o" hint-placeholder-count="8">
+            <option value="{{ o }}">{{ o }}</option>
+          </sc-for>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Формат (фильтр)
+        <select value="{{ ed.v.formatGroup }}" onChange="{{ ed.setFormatGroup }}" style="height:44px;padding:0 10px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;cursor:pointer;outline:none">
+          <sc-for list="{{ ed.fmtOptions }}" as="o" hint-placeholder-count="3">
+            <option value="{{ o }}">{{ o }}</option>
+          </sc-for>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Формат — текст
+        <input value="{{ ed.v.format }}" onChange="{{ ed.setFormat }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Академических часов
+        <input value="{{ ed.v.hours }}" onChange="{{ ed.setHours }}" type="number" step="0.5" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Длительность — текст
+        <input value="{{ ed.v.duration }}" onChange="{{ ed.setDuration }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Цена, ₸ (0 — по запросу)
+        <input value="{{ ed.v.priceNum }}" onChange="{{ ed.setPriceNum }}" type="number" step="1000" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Города (через запятую)
+        <input value="{{ ed.v.citiesText }}" onChange="{{ ed.setCities }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Аудитория (через запятую: Руководители, ИТР и специалисты, Рабочие профессии)
+        <input value="{{ ed.v.agText }}" onChange="{{ ed.setAudienceGroups }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Имя тренера
+        <input value="{{ ed.v.trainerName }}" onChange="{{ ed.setTrainerName }}" style="height:44px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      </label>
+    </div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px">
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Цель программы
+        <textarea value="{{ ed.v.goal }}" onChange="{{ ed.setGoal }}" rows="3" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">О программе
+        <textarea value="{{ ed.v.description }}" onChange="{{ ed.setDescription }}" rows="3" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Результаты обучения (пункты «1. …»)
+        <textarea value="{{ ed.v.learn }}" onChange="{{ ed.setLearn }}" rows="4" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Программа (МОДУЛЬ 1. …)
+        <textarea value="{{ ed.v.program }}" onChange="{{ ed.setProgram }}" rows="5" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Аудитория — текст
+        <textarea value="{{ ed.v.audience }}" onChange="{{ ed.setAudience }}" rows="2" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;color:#5A6472">Тренеры — квалификация и био
+        <textarea value="{{ ed.v.trainer }}" onChange="{{ ed.setTrainer }}" rows="5" style="padding:10px 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:15px;line-height:1.5;color:#0E1116;resize:vertical;outline:none" style-focus="border-color:#B0703F"></textarea>
+      </label>
+    </div>
+    <p style="margin:18px 0 0;font-size:13px;line-height:1.5;color:#8A94A3;max-width:70ch">Фото курса и тренеров меняются перетаскиванием прямо в блоки на странице. Правки сохраняются автоматически: {{ cmsStatus }}.</p>
+  </div>
+  </sc-if>
+
+  <div style="display:flex;flex-wrap:wrap;gap:clamp(28px,4vw,64px);padding:clamp(36px,5vw,72px) clamp(20px,5vw,72px) clamp(56px,7vw,110px)">
+    <div style="flex:1 1 560px;min-width:0;display:flex;flex-direction:column;gap:clamp(32px,4vw,52px)">
+      <section>
+        <h2 style="margin:0 0 14px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">Цель программы</h2>
+        <p style="margin:0;font-size:clamp(15px,1.2vw,17px);line-height:1.6;color:#3C4553;max-width:75ch;text-wrap:pretty">{{ course.goal }}</p>
+      </section>
+      <section>
+        <h2 style="margin:0 0 14px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">О программе</h2>
+        <p style="margin:0;font-size:clamp(15px,1.2vw,17px);line-height:1.6;color:#3C4553;max-width:75ch;text-wrap:pretty">{{ course.description }}</p>
+      </section>
+      <sc-if value="{{ course.hasLearn }}" hint-placeholder-val="{{ true }}">
+        <section>
+          <h2 style="margin:0 0 18px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">Чему вы научитесь</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1px;background:rgba(14,17,22,.12);border:1px solid rgba(14,17,22,.12)">
+            <sc-for list="{{ course.learnList }}" as="l" hint-placeholder-count="4">
+              <div style="background:#FFFFFF;padding:clamp(18px,2vw,26px);font-size:15px;line-height:1.5;color:#3C4553">
+                <span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#B0703F;margin-bottom:10px">{{ l.num }}</span>{{ l.text }}
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+      <sc-if value="{{ course.hasProgram }}" hint-placeholder-val="{{ true }}">
+        <section>
+          <h2 style="margin:0 0 18px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">Программа</h2>
+          <div style="display:flex;flex-direction:column">
+            <sc-for list="{{ course.programList }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex;gap:clamp(14px,2vw,28px);padding:18px 0;border-top:1px solid rgba(14,17,22,.1)">
+                <span style="flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#A3ADBB;padding-top:3px">{{ p.num }}</span>
+                <span style="flex:1 1 auto;min-width:0;font-size:15px;line-height:1.55;color:#3C4553;text-wrap:pretty">{{ p.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+      <section>
+        <h2 style="margin:0 0 14px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">Кому подойдёт</h2>
+        <p style="margin:0;font-size:clamp(15px,1.2vw,17px);line-height:1.6;color:#3C4553;max-width:75ch;text-wrap:pretty">{{ course.audience }}</p>
+      </section>
+      <sc-if value="{{ course.hasTrainer }}" hint-placeholder-val="{{ true }}">
+        <section>
+          <h2 style="margin:0 0 22px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">{{ course.trainerTitle }}</h2>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ course.trainerList }}" as="t" hint-placeholder-count="1">
+              <sc-if value="{{ t.full }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-wrap:wrap;gap:clamp(24px,3vw,44px);align-items:stretch;background:#F5F6F9;border:1px solid rgba(14,17,22,.08);padding:clamp(22px,2.6vw,34px)">
+                  <div style="flex:0 0 auto;align-self:flex-start;width:clamp(130px,13vw,170px);aspect-ratio:3/4;position:relative;overflow:hidden;border-radius:4px;box-shadow:0 12px 30px rgba(14,17,22,.14)">
+                    <image-slot id="{{ t.slot }}" src="{{ t.photo }}" shape="rect" placeholder="Фото тренера"></image-slot>
+                  </div>
+                  <div style="flex:1 1 320px;min-width:0;padding:2px 0">
+                    <div style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(19px,1.8vw,25px);font-weight:600;letter-spacing:-.015em;line-height:1.15">{{ t.name }}</div>
+                    <sc-if value="{{ t.hasRole }}" hint-placeholder-val="{{ true }}">
+                      <div style="margin-top:10px;padding-bottom:18px;border-bottom:1px solid rgba(14,17,22,.1);font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.06em;line-height:1.5;text-transform:uppercase;color:#B0703F;text-wrap:pretty">{{ t.role }}</div>
+                    </sc-if>
+                    <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px">
+                      <sc-for list="{{ t.bio }}" as="p" hint-placeholder-count="2">
+                        <p style="margin:0;font-size:15px;line-height:1.65;color:#4A5462;max-width:62ch;text-wrap:pretty">{{ p.text }}</p>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ t.compact }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:18px;background:#F5F6F9;border:1px solid rgba(14,17,22,.08);padding:16px 20px">
+                  <div style="flex:0 0 auto;width:64px;height:64px;position:relative;border:1px solid rgba(14,17,22,.1)">
+                    <image-slot id="{{ t.slot }}" src="{{ t.photo }}" shape="rect" placeholder="Фото"></image-slot>
+                  </div>
+                  <div style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:18px;font-weight:600;letter-spacing:-.01em">{{ t.name }}</div>
+                </div>
+              </sc-if>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+    </div>
+
+    <aside style="flex:1 1 300px;max-width:360px;min-width:260px;position:sticky;top:96px;align-self:flex-start;border:1px solid rgba(14,17,22,.12);padding:clamp(20px,2.4vw,30px)">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#8A94A3">Кратко</div>
+      <dl style="margin:18px 0 0;display:flex;flex-direction:column;gap:14px;font-size:15px">
+        <div style="display:flex;justify-content:space-between;gap:16px"><dt style="color:#8A94A3">Формат</dt><dd style="margin:0;text-align:right;color:#0E1116">{{ course.formatSummary }}</dd></div>
+        <div style="display:flex;justify-content:space-between;gap:16px"><dt style="color:#8A94A3">Длительность</dt><dd style="margin:0;text-align:right;color:#0E1116">{{ course.durationSummary }}</dd></div>
+        <sc-if value="{{ course.hasLocations }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:space-between;gap:16px"><dt style="color:#8A94A3">Локации</dt><dd style="margin:0;text-align:right;color:#0E1116">{{ course.locations }}</dd></div>
+        </sc-if>
+        <div style="display:flex;justify-content:space-between;gap:16px"><dt style="color:#8A94A3">Стоимость</dt><dd style="margin:0;text-align:right;font-weight:600;color:#0E1116">{{ course.priceLabel }}</dd></div>
+      </dl>
+      <sc-if value="{{ course.notInCart }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ course.toggle }}" style="margin-top:24px;width:100%;height:48px;border:none;border-radius:6px;background:#0E1116;color:#FFFFFF;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s" style-hover="background:#242C38">Добавить в заявку</button>
+      </sc-if>
+      <sc-if value="{{ course.inCart }}" hint-placeholder-val="{{ false }}">
+        <a href="#/request" style="margin-top:24px;width:100%;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:#B0703F;color:#FFFFFF;font-size:15px;font-weight:600">Оформить заявку</a>
+      </sc-if>
+    </aside>
+  </div>
+</main>
+</sc-if>
+
+<sc-if value="{{ isRequest }}" hint-placeholder-val="{{ false }}">
+<main style="flex:1 1 auto;font-family:'Onest',system-ui,sans-serif;animation:upIn .35s ease both;padding:clamp(28px,4vw,56px) clamp(20px,5vw,72px) clamp(56px,7vw,110px)">
+  <a href="#/" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#5A6472">← Вернуться в каталог</a>
+  <h1 style="margin:clamp(18px,2.4vw,28px) 0 0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(30px,3.6vw,48px);font-weight:600;letter-spacing:-.03em;line-height:1.05">Заявка на обучение</h1>
+
+  <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:clamp(26px,3vw,40px);max-width:760px;border:1px solid rgba(14,17,22,.12);padding:clamp(24px,3vw,40px)">
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#B0703F">Заявка отправлена</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A94A3">№ {{ ticket }}</div>
+      </div>
+      <p style="margin:16px 0 0;font-size:17px;line-height:1.55;color:#0E1116;max-width:60ch">Спасибо, {{ form.name }}. Мы получили заявку от {{ form.company }} и свяжемся с вами по указанным контактам в течение одного рабочего дня.</p>
+      <sc-if value="{{ demoMode }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px;padding:12px 14px;border:1px dashed rgba(14,17,22,.2);font-size:13px;line-height:1.5;color:#8A94A3">Демо-режим: адреса отправки не настроены в form-config.js, заявка нигде не сохранена.</div>
+      </sc-if>
+      <div style="margin-top:26px;padding-top:22px;border-top:1px solid rgba(14,17,22,.1);font-size:14px;color:#5A6472">Выбранные программы</div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ sentItems }}" as="s" hint-placeholder-count="2">
+          <div style="display:flex;justify-content:space-between;gap:16px;font-size:15px"><span style="color:#0E1116">{{ s.title }}</span><span style="font-family:'IBM Plex Mono',monospace;color:#8A94A3">{{ s.id }}</span></div>
+        </sc-for>
+      </div>
+      <a href="#/" style="margin-top:28px;display:inline-flex;align-items:center;height:46px;padding:0 22px;border:1px solid #0E1116;border-radius:6px;font-size:15px;font-weight:500">Вернуться в каталог</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+  <div style="margin-top:clamp(24px,3vw,40px);display:flex;flex-wrap:wrap;gap:clamp(28px,4vw,56px);align-items:flex-start">
+    <form onSubmit="{{ submit }}" style="flex:1 1 440px;min-width:280px;display:flex;flex-direction:column;gap:18px">
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">ФИО
+        <input value="{{ form.name }}" onChange="{{ onName }}" required="{{ true }}" placeholder="Иванов Иван" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Телефон
+        <input value="{{ form.phone }}" onChange="{{ onPhone }}" required="{{ true }}" placeholder="+7 (___) ___-__-__" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Email
+        <input value="{{ form.email }}" onChange="{{ onEmail }}" type="email" required="{{ true }}" placeholder="name@company.kz" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Предприятие / компания
+        <input value="{{ form.company }}" onChange="{{ onCompany }}" required="{{ true }}" placeholder="АО «…»" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+      </label>
+      <div style="display:flex;flex-wrap:wrap;gap:18px">
+        <label style="flex:1 1 140px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Город
+          <input value="{{ form.city }}" onChange="{{ onCity }}" placeholder="Астана" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+        </label>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:18px">
+        <label style="flex:1 1 140px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Участников
+          <input value="{{ form.people }}" onChange="{{ onPeople }}" placeholder="25" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+        </label>
+        <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Желаемые сроки
+          <input value="{{ form.period }}" onChange="{{ onPeriod }}" placeholder="2 квартал 2026" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+        </label>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Комментарий
+        <textarea value="{{ form.comment }}" onChange="{{ onComment }}" rows="4" placeholder="Площадка, особые требования, вопросы" style="padding:12px 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;line-height:1.5;color:#0E1116;resize:vertical;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F"></textarea>
+      </label>
+      <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+        <button type="submit" disabled="{{ sending }}" style="height:52px;border:none;border-radius:6px;background:#B0703F;color:#FFFFFF;font-size:16px;font-weight:600;cursor:pointer;transition:background .2s" style-hover="background:#C4814C">{{ submitLabel }}</button>
+      </sc-if>
+      <sc-if value="{{ sendErr }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:14px 16px;border:1px solid rgba(176,112,63,.45);background:#FBF7F3;font-size:14px;line-height:1.5;color:#8A4B1E">Не удалось отправить заявку. Проверьте соединение и попробуйте снова или позвоните нам напрямую.</div>
+      </sc-if>
+      <sc-if value="{{ noItems }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:16px;border:1px dashed rgba(14,17,22,.2);font-size:15px;color:#5A6472">Сначала выберите курсы в каталоге — они появятся в заявке.</div>
+      </sc-if>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#8A94A3;max-width:52ch">Отправляя заявку, вы соглашаетесь на обработку персональных данных Корпоративным университетом ERG.</p>
+    </form>
+
+    <div style="flex:1 1 380px;min-width:280px;border:1px solid rgba(14,17,22,.12)">
+      <div style="padding:clamp(18px,2vw,24px);border-bottom:1px solid rgba(14,17,22,.1);display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+        <span style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:18px;font-weight:600">Выбранные курсы</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A94A3">{{ cartCount }}</span>
+      </div>
+      <sc-for list="{{ cartItems }}" as="i" hint-placeholder-count="2">
+        <div style="padding:clamp(16px,1.8vw,22px);border-bottom:1px solid rgba(14,17,22,.08);display:flex;gap:14px;align-items:flex-start">
+          <div style="flex:1 1 auto;min-width:0">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#B0703F;text-transform:uppercase">{{ i.category }}</div>
+            <a href="{{ i.href }}" style="display:block;margin-top:7px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;font-weight:600;line-height:1.3">{{ i.title }}</a>
+            <div style="margin-top:7px;font-size:13px;color:#5A6472">{{ i.metaLabel }}</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+            <span style="font-size:14px;font-weight:600;white-space:nowrap">{{ i.priceLabel }}</span>
+            <button onClick="{{ i.remove }}" style="background:transparent;border:none;padding:0;font-size:13px;color:#8A94A3;cursor:pointer;transition:color .2s" style-hover="color:#B0703F">Убрать</button>
+          </div>
+        </div>
+      </sc-for>
+      <div style="padding:clamp(18px,2vw,24px);display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+        <span style="font-size:15px;color:#5A6472">Ориентировочно</span>
+        <span style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:20px;font-weight:600">{{ cartTotal }}</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</main>
+</sc-if>
+
+<sc-if value="{{ isCustom }}" hint-placeholder-val="{{ false }}">
+<main style="flex:1 1 auto;font-family:'Onest',system-ui,sans-serif;animation:upIn .35s ease both">
+  <div style="background:#0D131D;color:#E9EDF3;padding:clamp(24px,3vw,40px) clamp(20px,5vw,72px) clamp(40px,5vw,72px)">
+    <a href="#/" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#95A1B3">← Каталог курсов</a>
+    <span style="display:block;margin-top:clamp(20px,3vw,34px);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#E8A274">Под задачу заказчика</span>
+    <h1 style="margin:clamp(14px,2vw,22px) 0 0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(30px,3.8vw,52px);font-weight:600;letter-spacing:-.03em;line-height:1.04;max-width:24ch;color:#FFFFFF">Разработка курса под заказ</h1>
+    <p style="margin:18px 0 0;max-width:62ch;font-size:clamp(15px,1.2vw,18px);line-height:1.55;color:#95A1B3;text-wrap:pretty">Если в каталоге нет программы под вашу задачу, Корпоративный университет спроектирует её с нуля: от анализа потребности до оценки результата обучения.</p>
+    <div style="margin-top:clamp(32px,4vw,52px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:clamp(18px,2vw,28px);border-top:1px solid rgba(233,237,243,.14);padding-top:clamp(20px,2.4vw,30px)">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E8A274">01</div>
+        <div style="margin-top:10px;font-size:16px;font-weight:600;color:#FFFFFF">Диагностика</div>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#95A1B3">Интервью с заказчиком, разбор процессов и текущего уровня компетенций.</p>
+      </div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E8A274">02</div>
+        <div style="margin-top:10px;font-size:16px;font-weight:600;color:#FFFFFF">Проектирование</div>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#95A1B3">Цели обучения, программа, формат, подбор тренеров и площадки.</p>
+      </div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E8A274">03</div>
+        <div style="margin-top:10px;font-size:16px;font-weight:600;color:#FFFFFF">Проведение</div>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#95A1B3">Обучение на площадке предприятия, в учебном центре или онлайн.</p>
+      </div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E8A274">04</div>
+        <div style="margin-top:10px;font-size:16px;font-weight:600;color:#FFFFFF">Оценка</div>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.5;color:#95A1B3">Замер результата, отчёт по группе и рекомендации по развитию.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:clamp(28px,4vw,56px) clamp(20px,5vw,72px) clamp(56px,7vw,110px)">
+    <sc-if value="{{ customSent }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:760px;border:1px solid rgba(14,17,22,.12);padding:clamp(24px,3vw,40px)">
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#B0703F">Запрос отправлен</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A94A3">№ {{ ticket }}</div>
+        </div>
+        <p style="margin:16px 0 0;font-size:17px;line-height:1.55;max-width:60ch">Спасибо, {{ cform.name }}. Методолог Корпоративного университета свяжется с вами в течение одного рабочего дня, чтобы уточнить задачу и предложить концепцию программы.</p>
+        <a href="#/" style="margin-top:28px;display:inline-flex;align-items:center;height:46px;padding:0 22px;border:1px solid #0E1116;border-radius:6px;font-size:15px;font-weight:500">Вернуться в каталог</a>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ customNotSent }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:clamp(28px,4vw,56px);align-items:flex-start">
+      <form onSubmit="{{ submitCustom }}" style="flex:1 1 440px;min-width:280px;display:flex;flex-direction:column;gap:18px">
+        <h2 style="margin:0;font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(22px,2.2vw,30px);font-weight:600;letter-spacing:-.02em">Расскажите о задаче</h2>
+        <label style="display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Задача обучения
+          <textarea value="{{ cform.task }}" onChange="{{ onCTask }}" rows="4" required="{{ true }}" placeholder="Например: подготовка мастеров участка к работе с новым оборудованием" style="padding:12px 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;line-height:1.5;color:#0E1116;resize:vertical;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F"></textarea>
+        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:18px">
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Целевая аудитория
+            <input value="{{ cform.audience }}" onChange="{{ onCAudience }}" placeholder="Мастера, ИТР, руководители" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+          <label style="flex:1 1 140px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Участников
+            <input value="{{ cform.people }}" onChange="{{ onCPeople }}" placeholder="25" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:18px">
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Формат
+            <select value="{{ cform.format }}" onChange="{{ onCFormat }}" style="height:48px;padding:0 12px;border:1px solid rgba(14,17,22,.18);border-radius:6px;background:#FFFFFF;font-size:16px;color:#0E1116;cursor:pointer;outline:none">
+              <option value="">не определён</option>
+              <option value="Оффлайн на площадке">Оффлайн на площадке</option>
+              <option value="Онлайн">Онлайн</option>
+              <option value="Смешанный">Смешанный</option>
+              <option value="Практика на производстве">Практика на производстве</option>
+            </select>
+          </label>
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Желаемые сроки
+            <input value="{{ cform.deadline }}" onChange="{{ onCDeadline }}" placeholder="2 квартал 2026" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+        </div>
+        <div style="padding-top:8px;border-top:1px solid rgba(14,17,22,.1);font-size:14px;color:#5A6472">Контакты</div>
+        <div style="display:flex;flex-wrap:wrap;gap:18px">
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">ФИО
+            <input value="{{ cform.name }}" onChange="{{ onCName }}" required="{{ true }}" placeholder="Иванов Иван" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Компания
+            <input value="{{ cform.company }}" onChange="{{ onCCompany }}" required="{{ true }}" placeholder="АО «…»" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:18px">
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Телефон
+            <input value="{{ cform.phone }}" onChange="{{ onCPhone }}" required="{{ true }}" placeholder="+7 (___) ___-__-__" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+          <label style="flex:1 1 180px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:#5A6472">Email
+            <input value="{{ cform.email }}" onChange="{{ onCEmail }}" type="email" required="{{ true }}" placeholder="name@company.kz" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.18);border-radius:6px;font-size:16px;color:#0E1116;outline:none;transition:border-color .2s" style-focus="border-color:#B0703F">
+          </label>
+        </div>
+        <button type="submit" disabled="{{ sending }}" style="height:52px;border:none;border-radius:6px;background:#B0703F;color:#FFFFFF;font-size:16px;font-weight:600;cursor:pointer;transition:background .2s" style-hover="background:#C4814C">{{ customLabel }}</button>
+        <sc-if value="{{ sendErr }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:14px 16px;border:1px solid rgba(176,112,63,.45);background:#FBF7F3;font-size:14px;line-height:1.5;color:#8A4B1E">Не удалось отправить запрос. Проверьте соединение и попробуйте снова.</div>
+        </sc-if>
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#8A94A3;max-width:52ch">Отправляя запрос, вы соглашаетесь на обработку персональных данных Корпоративным университетом ERG.</p>
+      </form>
+
+      <aside style="flex:1 1 320px;min-width:260px;border:1px solid rgba(14,17,22,.12);padding:clamp(20px,2.4vw,28px)">
+        <div style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:18px;font-weight:600">Что входит в разработку</div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px;font-size:14px;line-height:1.5;color:#3C4553">
+          <div style="padding-bottom:14px;border-bottom:1px solid rgba(14,17,22,.08)">Учебная программа и план занятий</div>
+          <div style="padding-bottom:14px;border-bottom:1px solid rgba(14,17,22,.08)">Раздаточные и методические материалы</div>
+          <div style="padding-bottom:14px;border-bottom:1px solid rgba(14,17,22,.08)">Практические кейсы на данных предприятия</div>
+          <div style="padding-bottom:14px;border-bottom:1px solid rgba(14,17,22,.08)">Инструменты входной и итоговой оценки</div>
+          <div>Сертификат по завершении обучения</div>
+        </div>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid rgba(14,17,22,.12);font-size:13px;line-height:1.55;color:#5A6472">Срок разработки — от 3 недель в зависимости от объёма программы. Стоимость рассчитывается индивидуально.</div>
+      </aside>
+    </div>
+    </sc-if>
+  </div>
+</main>
+</sc-if>
+
+<footer style="background:#0A0C10;color:#95A1B3;font-family:'Onest',system-ui,sans-serif;padding:clamp(28px,3vw,44px) clamp(20px,5vw,72px);display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <img src="assets/logo-ergdu-white.png" alt="Корпоративный университет ERG" style="height:26px;width:auto;display:block">
+    <button onClick="{{ openGate }}" style="height:32px;padding:0 14px;border:1px solid rgba(233,237,243,.22);border-radius:999px;background:transparent;color:#7A8291;font-family:inherit;font-size:12px;letter-spacing:.04em;cursor:pointer;transition:border-color .2s,color .2s" style-hover="border-color:#E8A274;color:#E8A274">{{ editLabel }}</button>
+  </div>
+  <span style="font-size:14px">© 2026 Корпоративный университет ERG</span>
+</footer>
+
+<sc-if value="{{ gate }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeGate }}" style="position:fixed;inset:0;z-index:150;background:rgba(8,10,14,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:24px;animation:ovIn .25s ease both">
+    <form onClick="{{ stop }}" onSubmit="{{ submitGate }}" style="width:min(100%,380px);background:#FFFFFF;padding:clamp(24px,3vw,34px);display:flex;flex-direction:column;gap:14px;font-family:'Onest',system-ui,sans-serif;animation:upIn .3s cubic-bezier(.2,.85,.3,1) both">
+      <div style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:20px;font-weight:600;letter-spacing:-.015em;color:#0E1116">Режим редактирования</div>
+      <p style="margin:0;font-size:14px;line-height:1.5;color:#5A6472">Введите пароль, чтобы редактировать курсы каталога.</p>
+      <input value="{{ pwd }}" onChange="{{ onPwd }}" type="password" autoFocus="{{ true }}" placeholder="Пароль" style="height:48px;padding:0 14px;border:1px solid rgba(14,17,22,.2);border-radius:6px;font-size:16px;color:#0E1116;outline:none" style-focus="border-color:#B0703F">
+      <sc-if value="{{ pwdErr }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;color:#B0703F">Неверный пароль</div>
+      </sc-if>
+      <button type="submit" style="height:48px;border:none;border-radius:6px;background:#0E1116;color:#FFFFFF;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer">Войти</button>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ edit }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:0;right:0;bottom:0;z-index:90;background:#B0703F;color:#FFFFFF;font-family:'Onest',system-ui,sans-serif;padding:12px clamp(16px,4vw,32px);display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between">
+    <span style="font-size:14px;font-weight:600;letter-spacing:.02em">Режим редактирования</span>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span style="font-size:13px;opacity:.85">{{ cmsStatus }}</span>
+      <button onClick="{{ addCourse }}" style="height:34px;padding:0 14px;border:1px solid rgba(255,255,255,.5);border-radius:999px;background:transparent;color:#FFFFFF;font-family:inherit;font-size:13px;cursor:pointer">+ Новый курс</button>
+      <button onClick="{{ openGate }}" style="height:34px;padding:0 14px;border:none;border-radius:999px;background:#FFFFFF;color:#1A120C;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer">Выйти</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ drawer }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeDrawer }}" style="position:fixed;inset:0;z-index:95;background:rgba(8,10,14,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);animation:ovIn .25s ease both;display:flex;justify-content:flex-end">
+    <div onClick="{{ stop }}" style="width:min(100%,440px);height:100%;background:#FFFFFF;display:flex;flex-direction:column;animation:drIn .3s cubic-bezier(.2,.85,.3,1) both;font-family:'Onest',system-ui,sans-serif">
+      <div style="padding:clamp(20px,2.4vw,28px);border-bottom:1px solid rgba(14,17,22,.1);display:flex;align-items:center;justify-content:space-between;gap:16px">
+        <span style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:20px;font-weight:600;letter-spacing:-.015em">Моя заявка</span>
+        <button onClick="{{ closeDrawer }}" style="width:36px;height:36px;display:grid;place-items:center;background:transparent;border:1px solid rgba(14,17,22,.16);border-radius:999px;font-size:15px;cursor:pointer">✕</button>
+      </div>
+      <div style="flex:1 1 auto;overflow:auto">
+        <sc-for list="{{ cartItems }}" as="i" hint-placeholder-count="2">
+          <div style="padding:clamp(16px,2vw,22px);border-bottom:1px solid rgba(14,17,22,.08);display:flex;gap:14px;align-items:flex-start">
+            <div style="flex:1 1 auto;min-width:0">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:#B0703F;text-transform:uppercase">{{ i.category }}</div>
+              <a href="{{ i.href }}" onClick="{{ closeDrawer }}" style="display:block;margin-top:7px;font-family:'Space Grotesk',system-ui,sans-serif;font-size:16px;font-weight:600;line-height:1.3">{{ i.title }}</a>
+              <div style="margin-top:7px;font-size:13px;color:#5A6472">{{ i.metaLabel }}</div>
+            </div>
+            <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+              <span style="font-size:14px;font-weight:600;white-space:nowrap">{{ i.priceLabel }}</span>
+              <button onClick="{{ i.remove }}" style="background:transparent;border:none;padding:0;font-size:13px;color:#8A94A3;cursor:pointer">Убрать</button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noItems }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:clamp(28px,4vw,48px);text-align:center;color:#5A6472;font-size:15px;line-height:1.55">Пока ничего не выбрано.<br>Отметьте курсы в каталоге кнопкой «В заявку».</div>
+        </sc-if>
+      </div>
+      <div style="padding:clamp(18px,2.2vw,26px);border-top:1px solid rgba(14,17,22,.1)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px">
+          <span style="font-size:15px;color:#5A6472">Ориентировочно</span>
+          <span style="font-family:'Space Grotesk',system-ui,sans-serif;font-size:20px;font-weight:600">{{ cartTotal }}</span>
+        </div>
+        <a href="#/request" onClick="{{ closeDrawer }}" style="margin-top:16px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#0E1116;color:#FFFFFF;font-size:16px;font-weight:600">Оформить заявку</a>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+  state = {
+    raw: [], cms: { byId: {}, added: [], deleted: [] }, edit: false, gate: false, pwd: "", pwdErr: false, cmsSaved: true, cmsLocalOnly: false,
+    route: "", query: "", sort: "default",
+    f: { category: [], formatGroup: [], durationBucket: [], cities: [], priceBucket: [], audienceGroups: [] },
+    cart: [], drawer: false, sent: false, sentItems: [],
+    w: 1400, filtersOpen: false, more: {}, collapsed: {},
+    form: { name: "", phone: "", email: "", company: "", city: "", people: "", period: "", comment: "" },
+    sending: false, sendErr: false, ticket: "", demoMode: false,
+    cform: { task: "", audience: "", people: "", format: "", deadline: "", name: "", company: "", phone: "", email: "" },
+    customSent: false
+  };
+
+  probePhoto(path) {
+    this.photos = this.photos || {};
+    if (path in this.photos) return this.photos[path] ? path : "";
+    this.photos[path] = false;
+    const im = new Image();
+    im.onload = () => { this.photos[path] = true; clearTimeout(this.photoT); this.photoT = setTimeout(() => this.forceUpdate(), 80); };
+    im.src = path;
+    return "";
+  }
+  cfg() { return window.ERG_FORM || {}; }
+  makeTicket() {
+    const d = new Date();
+    const p = n => String(n).padStart(2, "0");
+    return "" + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes()) + p(Math.floor(Math.random() * 100));
+  }
+  sendLead(kind, fields, courses) {
+    const cfg = this.cfg();
+    const ticket = this.makeTicket();
+    const lines = Object.entries(fields).filter(([, v]) => v).map(([k, v]) => k + ": " + v);
+    const courseText = (courses || []).map(c => c.id + " — " + c.title).join("\n");
+    const jobs = [];
+
+    if (cfg.web3formsKey) {
+      const body = {
+        access_key: cfg.web3formsKey,
+        subject: (cfg.mailSubject || "Заявка с сайта КУ ERG") + " № " + ticket,
+        from_name: "Сайт КУ ERG",
+        "Номер заявки": ticket,
+        "Тип обращения": kind,
+        ...fields
+      };
+      if (courseText) body["Выбранные программы"] = courseText;
+      if (cfg.autoReply && fields.Email) {
+        body.replyto = fields.Email;
+        body.autoresponse = "Здравствуйте! Мы получили вашу заявку № " + ticket + " и свяжемся с вами в течение одного рабочего дня.\n\n" + (cfg.autoReplyFrom || "Корпоративный университет ERG");
+      }
+      jobs.push(fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(body)
+      }).then(r => { if (!r.ok) throw new Error("mail"); }));
+    }
+
+    if (cfg.sheetUrl) {
+      const row = { ticket, kind, date: new Date().toLocaleString("ru-RU"), ...fields, courses: courseText, text: lines.join("\n") };
+      jobs.push(fetch(cfg.sheetUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(row)
+      }));
+    }
+
+    if (!jobs.length) return Promise.resolve({ ticket, demo: true });
+    return Promise.all(jobs).then(() => ({ ticket, demo: false }));
+  }
+  loadCms() {
+    let local = null;
+    try { local = JSON.parse(localStorage.getItem("erg_cms") || "null"); } catch (e) {}
+    const shape = j => j && typeof j === "object" ? { byId: j.byId || {}, added: j.added || [], deleted: j.deleted || [], ts: j.ts || 0 } : null;
+    fetch("./courses-cms.json?t=" + Date.now(), { cache: "no-store" })
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null)
+      .then(j => {
+        const file = shape(j), loc = shape(local);
+        const win = !file ? loc : !loc ? file : (loc.ts > file.ts ? loc : file);
+        if (win) this.setState({ cms: win, cmsLocalOnly: !!(loc && file && loc.ts > file.ts) });
+      });
+  }
+  saveCms(cms) {
+    this.setState({ cms, cmsSaved: false });
+    clearTimeout(this.cmsT);
+    this.cmsT = setTimeout(() => {
+      const payload = { byId: cms.byId || {}, added: cms.added || [], deleted: cms.deleted || [], ts: Date.now() };
+      const body = JSON.stringify(payload);
+      try { localStorage.setItem("erg_cms", body); } catch (e) {}
+      const w = window.omelette && window.omelette.writeFile;
+      if (!w) { this.setState({ cmsSaved: true, cmsLocalOnly: true }); return; }
+      Promise.resolve(w("courses-cms.json", body))
+        .then(() => fetch("./courses-cms.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.text() : "").catch(() => ""))
+        .then(txt => {
+          let ok = false;
+          try { ok = JSON.parse(txt || "{}").ts === payload.ts; } catch (e) {}
+          this.setState({ cmsSaved: true, cmsLocalOnly: !ok });
+        })
+        .catch(() => this.setState({ cmsSaved: true, cmsLocalOnly: true }));
+    }, 500);
+  }
+  patch(id, key, value) {
+    const cms = this.state.cms;
+    const byId = { ...cms.byId, [id]: { ...(cms.byId[id] || {}), [key]: value } };
+    this.saveCms({ ...cms, byId });
+  }
+  norm(c) {
+    const hours = parseFloat(c.hours) || 0;
+    const price = parseFloat(c.priceNum) || 0;
+    const dur = hours <= 0 ? "до 8 ак. ч" : hours <= 8 ? "до 8 ак. ч" : hours <= 20 ? "9–20 ак. ч" : hours <= 40 ? "21–40 ак. ч" : "более 40 ак. ч";
+    const pb = price < 50000 ? "до 50 000 ₸" : price < 150000 ? "50–150 тыс ₸" : price <= 250000 ? "150–250 тыс ₸" : "более 250 000 ₸";
+    const cities = Array.isArray(c.cities) ? c.cities : String(c.cities || "").split(",").map(s => s.trim()).filter(Boolean);
+    const ag = Array.isArray(c.audienceGroups) ? c.audienceGroups : [];
+    const fg = ["Очно", "Онлайн", "Смешанный"].includes(c.formatGroup) ? c.formatGroup : "Очно";
+    return { ...c, hours, priceNum: price, durationBucket: dur, priceBucket: pb, cities, audienceGroups: ag, formatGroup: fg, price: price ? "от " + price.toLocaleString("ru-RU").replace(/,/g, " ") + " тг." : "по запросу", locations: cities.join(", ") };
+  }
+  merged() {
+    const { cms } = this.state;
+    const base = [...(this.state.raw || []), ...(cms.added || [])];
+    return base.filter(c => !(cms.deleted || []).includes(c.id))
+      .map(c => (cms.byId && cms.byId[c.id]) ? this.norm({ ...c, ...cms.byId[c.id] }) : c);
+  }
+  addCourse() {
+    const id = "NEW_" + Date.now().toString(36).toUpperCase();
+    const c = this.norm({
+      id, n: 900, category: "Лидерство и HR-стратегии", title: "Новый курс", fullTitle: "",
+      goal: "", description: "", learn: "", program: "", audience: "", format: "Очный",
+      formatGroup: "Очно", duration: "", hours: 8, cities: [], trainer: "", trainerName: "", priceNum: 0
+    });
+    const cms = this.state.cms;
+    this.saveCms({ ...cms, added: [...(cms.added || []), c] });
+    location.hash = "#/course/" + id;
+  }
+  removeCourse(id) {
+    if (!window.confirm("Удалить курс из каталога?")) return;
+    const cms = this.state.cms;
+    const added = (cms.added || []).filter(c => c.id !== id);
+    const wasAdded = added.length !== (cms.added || []).length;
+    this.saveCms({ ...cms, added, deleted: wasAdded ? (cms.deleted || []) : [...(cms.deleted || []), id] });
+    if ((location.hash || "").includes(id)) location.hash = "#/";
+  }
+  componentDidMount() {
+    this.loadCms();
+    try { if (sessionStorage.getItem("erg_edit") === "1") this.setState({ edit: true }); } catch (e) {}
+    this.onNavClick = e => {
+      const a = e.target.closest && e.target.closest("a[href]");
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (!/^variant-a-light\.dc\.html/.test(href)) return;
+      e.preventDefault();
+      this.setState({ navigating: true });
+      setTimeout(() => { location.href = href; }, 520);
+    };
+    document.addEventListener("click", this.onNavClick);
+    this.pick();
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    window.addEventListener("resize", this.onResize);
+    this.onResize();
+    this.sync = () => {
+      const r = (location.hash || "").replace(/^#/, "");
+      const m = r.match(/^\/cat\/(.+)$/);
+      if (m) {
+        const want = decodeURIComponent(m[1]).replace(/ё/g, "е").toLowerCase();
+        const all = this.state.raw.length ? this.state.raw : (window.ERG_COURSES || []);
+        const found = all.map(c => c.category).find(c => c && c.replace(/ё/g, "е").toLowerCase() === want);
+        const cat = found || decodeURIComponent(m[1]);
+        this.setState({ route: "/", f: { ...this.state.f, category: [cat] } });
+        history.replaceState(null, "", "#/");
+        window.scrollTo(0, 0);
+        return;
+      }
+      this.setState({ route: r });
+    };
+    window.addEventListener("hashchange", this.sync);
+    this.sync();
+    try { const c = JSON.parse(localStorage.getItem("erg_cart") || "[]"); if (Array.isArray(c)) this.setState({ cart: c }); } catch (e) {}
+  }
+  componentWillUnmount() { document.removeEventListener("click", this.onNavClick); window.removeEventListener("hashchange", this.sync); window.removeEventListener("resize", this.onResize); clearTimeout(this.t); clearTimeout(this.cmsT); }
+  pick() {
+    if (window.ERG_COURSES) this.setState({ raw: window.ERG_COURSES });
+    else this.t = setTimeout(() => this.pick(), 60);
+  }
+  saveCart(cart) { this.setState({ cart }); try { localStorage.setItem("erg_cart", JSON.stringify(cart)); } catch (e) {} }
+  toggle(id) {
+    const cart = this.state.cart.includes(id) ? this.state.cart.filter(x => x !== id) : [...this.state.cart, id];
+    this.saveCart(cart);
+  }
+  money(n) { return n ? "от " + n.toLocaleString("ru-RU").replace(/,/g, " ") + " ₸" : "по запросу"; }
+  hoursLabel(h) { return h ? h.toString().replace(".", ",") + " ак. ч" : "—"; }
+  splitList(t, mode) {
+    if (!t) return [];
+    let parts;
+    if (mode === "program") parts = t.split(/(?=МОДУЛЬ\s|Глава\s\d|Модуль\s\d|Раздел\s\d|Тема\s\d|День\s\d)/);
+    else parts = t.split(/(?=\b\d{1,2}\.\s)/);
+    parts = parts.map(s => s.trim()).filter(s => s.length > 3);
+    if (parts.length < 2) parts = t.split(/(?<=[.;])\s+(?=[А-ЯA-Z])/).map(s => s.trim()).filter(s => s.length > 12);
+    return parts.slice(0, 24).map((s, i) => ({
+      num: String(i + 1).padStart(2, "0"),
+      text: s.replace(/^\d{1,2}\.\s*/, "")
+    }));
+  }
+
+  trainerParts(c) {
+    const raw = (c.trainer || "").replace(/\s+/g, " ").trim();
+    if (raw.length < 4) return { trainerList: [], trainerTitle: "Тренер" };
+    const chunks = raw
+      .split(/(?<=ERG CU|ERG)\s+(?=[А-ЯЁ][а-яё]+\s[А-ЯЁ])/)
+      .map(x => x.trim()).filter(x => x.length > 2);
+    const list = chunks.map((chunk, i) => {
+      const ROLE = /^(психолог|тренер|директор|руководител|специалист|эксперт|мастер|коуч|бизнес|hr|преподавател|консультант|сварочный|инженер)/i;
+      const words = chunk.split(" ");
+      const nameWords = [];
+      for (const w of words) {
+        const clean = w.replace(/[,.;:—-]+$/, "");
+        if (nameWords.length >= 3) break;
+        if (!/^(?:[А-ЯЁ][а-яё]+|[А-ЯЁ]{3,})$/.test(clean)) break;
+        if (nameWords.length && ROLE.test(clean)) break;
+        nameWords.push(clean);
+        if (/[,.;:]$/.test(w)) break;
+      }
+      let name = nameWords.join(" ");
+      let body = name ? chunk.slice(chunk.indexOf(name) + name.length) : chunk;
+      if (i === 0 && c.trainerName && c.trainerName.length > 3) name = c.trainerName;
+      name = name.split(" ").map(w => w.length > 2 && w === w.toUpperCase() ? w[0] + w.slice(1).toLowerCase() : w).join(" ");
+      if (/^Эксперты/i.test(chunk)) { name = "Эксперты ERG"; body = chunk.replace(/^Эксперты[^.]*\.?/i, ""); }
+      body = body.replace(/^[\s.,\-—:]+/, "").trim();
+      const sentences = body.split(/(?<=[.!?])\s+/).filter(Boolean);
+      let role = "", rest = sentences;
+      if (sentences.length && sentences[0].length <= 150 && !/^[а-яё]/.test(sentences[0]) === false) { role = sentences[0].replace(/\.$/, ""); rest = sentences.slice(1); }
+      else if (sentences.length && sentences[0].length <= 150) { role = sentences[0].replace(/\.$/, ""); rest = sentences.slice(1); }
+      const paras = [];
+      for (let j = 0; j < rest.length; j += 3) paras.push({ text: rest.slice(j, j + 3).join(" ") });
+      if (!paras.length && !role && body) role = body;
+      const hasText = !!(role || paras.length);
+      return {
+        name: name || "Тренер ERG CU", role, hasRole: !!role, bio: paras,
+        slot: "tr-" + c.id + "-" + i, photo: this.probePhoto("assets/trainers/" + c.id + "-" + (i + 1) + ".jpg"), full: hasText, compact: !hasText
+      };
+    });
+    return { trainerList: list, trainerTitle: list.length > 1 ? "Тренеры" : "Тренер" };
+  }
+
+  filtered() {
+    const courses = this.merged();
+    const { query, f, sort } = this.state;
+    const q = query.trim().toLowerCase();
+    let out = courses.filter(c => {
+      if (q && !(c.title + " " + c.fullTitle + " " + c.category).toLowerCase().includes(q)) return false;
+      if (f.category.length && !f.category.includes(c.category)) return false;
+      if (f.formatGroup.length && !f.formatGroup.includes(c.formatGroup)) return false;
+      if (f.durationBucket.length && !f.durationBucket.includes(c.durationBucket)) return false;
+      if (f.priceBucket.length && !f.priceBucket.includes(c.priceBucket)) return false;
+      if (f.cities.length && !f.cities.some(x => c.cities.includes(x) || c.cities.includes("Весь Казахстан"))) return false;
+      if (f.audienceGroups.length && !f.audienceGroups.some(x => c.audienceGroups.includes(x))) return false;
+      return true;
+    });
+    if (sort === "priceAsc") out = [...out].sort((a, b) => a.priceNum - b.priceNum);
+    if (sort === "priceDesc") out = [...out].sort((a, b) => b.priceNum - a.priceNum);
+    if (sort === "hours") out = [...out].sort((a, b) => a.hours - b.hours);
+    if (sort === "title") out = [...out].sort((a, b) => a.title.localeCompare(b.title, "ru"));
+    return out;
+  }
+
+  groupDefs() {
+    return [
+      { key: "category", name: "Категория" },
+      { key: "formatGroup", name: "Формат" },
+      { key: "durationBucket", name: "Длительность" },
+      { key: "cities", name: "Локация" },
+      { key: "priceBucket", name: "Стоимость" },
+      { key: "audienceGroups", name: "Для кого" }
+    ];
+  }
+  buildGroups() {
+    const courses = this.merged();
+    const { f } = this.state;
+    const order = {
+      formatGroup: ["Очно", "Смешанный", "Онлайн"],
+      durationBucket: ["до 8 ак. ч", "9–20 ак. ч", "21–40 ак. ч", "более 40 ак. ч"],
+      priceBucket: ["до 50 000 ₸", "50–150 тыс ₸", "150–250 тыс ₸", "более 250 000 ₸"],
+      audienceGroups: ["Рабочие профессии", "ИТР и специалисты", "Руководители"]
+    };
+    return this.groupDefs().map(g => {
+      const counts = {};
+      courses.forEach(c => {
+        const v = c[g.key];
+        (Array.isArray(v) ? v : [v]).forEach(x => { if (x) counts[x] = (counts[x] || 0) + 1; });
+      });
+      let keys = Object.keys(counts);
+      if (order[g.key]) keys = order[g.key].filter(k => counts[k]);
+      else keys.sort((a, b) => counts[b] - counts[a]);
+      const LIMIT = 6, expanded = !!this.state.more[g.key], hasMore = keys.length > LIMIT;
+      const shown = hasMore && !expanded ? keys.slice(0, LIMIT) : keys;
+      const closed = (this.state.collapsed || {})[g.key] === true;
+      const picked = f[g.key].length;
+      return {
+        name: g.name,
+        open: !closed, chevron: closed ? "+" : "−",
+        pickedCount: picked ? picked : 0,
+        toggleGroup: () => this.setState({ collapsed: { ...(this.state.collapsed || {}), [g.key]: !closed } }),
+        hasMore: hasMore && !closed,
+        moreLabel: expanded ? "свернуть" : "показать все (" + keys.length + ")",
+        toggleMore: () => this.setState({ more: { ...this.state.more, [g.key]: !expanded } }),
+        items: shown.map(k => ({
+          label: k, count: counts[k], on: f[g.key].includes(k),
+          toggle: () => {
+            const cur = this.state.f[g.key];
+            const next = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k];
+            this.setState({ f: { ...this.state.f, [g.key]: next } });
+          }
+        }))
+      };
+    });
+  }
+
+  renderVals() {
+    const courses = this.merged();
+    const { cart, route, query, sort, drawer, form, sent, sentItems } = this.state;
+    const byId = id => courses.find(c => c.id === id);
+    const cartItems = cart.map(id => byId(id)).filter(Boolean).map(c => ({
+      id: c.id, title: c.title, category: c.category, href: "#/course/" + c.id,
+      priceLabel: this.money(c.priceNum),
+      metaLabel: c.formatGroup + " · " + this.hoursLabel(c.hours),
+      remove: () => this.toggle(c.id)
+    }));
+    const total = cart.reduce((s, id) => s + ((byId(id) || {}).priceNum || 0), 0);
+
+    const m = route.match(/^\/course\/(.+)$/);
+    const cur = m ? byId(m[1]) : null;
+    const isCourse = !!cur;
+    const isRequest = route === "/request";
+    const isCustom = route === "/custom";
+    const isCatalog = !isCourse && !isRequest && !isCustom;
+
+    const list = isCatalog ? this.filtered().map(c => ({
+      id: c.id, title: c.title, category: c.category, href: "#/course/" + c.id,
+      slotId: "cs-" + c.id, photo: this.probePhoto("assets/courses/" + c.id + ".jpg"), formatGroup: c.formatGroup, durLabel: this.hoursLabel(c.hours),
+      priceLabel: this.money(c.priceNum),
+      short: (c.goal || c.description || "").replace(/^[а-яa-z]/, s => s.toUpperCase()).slice(0, 130).trim() + "…",
+      inCart: cart.includes(c.id), notInCart: !cart.includes(c.id),
+      del: e => { if (e && e.stopPropagation) e.stopPropagation(); this.removeCourse(c.id); },
+      open: () => { location.hash = "#/course/" + c.id; window.scrollTo(0, 0); },
+      toggle: e => { if (e && e.stopPropagation) e.stopPropagation(); this.toggle(c.id); }
+    })) : [];
+
+    const course = cur ? {
+      ...cur,
+      durLabel: this.hoursLabel(cur.hours),
+      cityLabel: cur.cities.slice(0, 2).join(", ") + (cur.cities.length > 2 ? " +" + (cur.cities.length - 2) : ""),
+      priceLabel: this.money(cur.priceNum),
+      heroSlot: "cs-" + cur.id, photo: this.probePhoto("assets/courses/" + cur.id + ".jpg"), trainerSlot: "tr-" + cur.id,
+      learnList: this.splitList(cur.learn), programList: this.splitList(cur.program, "program"),
+      hasLearn: this.splitList(cur.learn).length > 0,
+      hasProgram: this.splitList(cur.program, "program").length > 0,
+      hasTrainer: !!(cur.trainer && cur.trainer.length > 3),
+      durationSummary: this.hoursLabel(cur.hours),
+      formatSummary: (cur.format || "").split(/(?<=[.!?])\s+/)[0].length <= 70 ? (cur.format || "").split(/(?<=[.!?])\s+/)[0] : cur.formatGroup,
+      ...this.trainerParts(cur),
+      hasCities: cur.cities.length > 0,
+      hasLocations: !!(cur.locations && cur.locations.length > 1),
+      inCart: cart.includes(cur.id), notInCart: !cart.includes(cur.id),
+      toggle: () => this.toggle(cur.id)
+    } : {};
+
+    const set = k => e => this.setState({ form: { ...this.state.form, [k]: e.target.value } });
+    const cset = k => e => this.setState({ cform: { ...this.state.cform, [k]: e.target.value } });
+    const narrow = (this.state.w || 1400) < 1060;
+
+    return {
+      isCatalog, isCourse, isRequest, isCustom, course, list, groups: this.buildGroups(),
+      showCustomCard: isCatalog && list.length > 0,
+      navigating: !!this.state.navigating,
+      edit: this.state.edit, notEdit: !this.state.edit,
+      editCatalog: this.state.edit && isCatalog,
+      editCourse: this.state.edit && isCourse,
+      gate: this.state.gate, pwd: this.state.pwd, pwdErr: this.state.pwdErr,
+      cmsStatus: this.state.cmsSaved ? (this.state.cmsLocalOnly ? "Сохранено локально" : "Сохранено") : "Сохранение…",
+      editLabel: this.state.edit ? "Выйти из режима правки" : "Edit mode",
+      openGate: () => { if (this.state.edit) { try { sessionStorage.removeItem("erg_edit"); } catch (e) {} this.setState({ edit: false }); } else this.setState({ gate: true, pwd: "", pwdErr: false }); },
+      closeGate: () => this.setState({ gate: false }),
+      onPwd: e => this.setState({ pwd: e.target.value, pwdErr: false }),
+      submitGate: e => {
+        e.preventDefault();
+        if (this.state.pwd === "erg-cms-2026") {
+          try { sessionStorage.setItem("erg_edit", "1"); } catch (er) {}
+          this.setState({ edit: true, gate: false, pwd: "" });
+        } else this.setState({ pwdErr: true });
+      },
+      addCourse: () => this.addCourse(),
+      ed: cur ? {
+        catOptions: ["Лидерство и HR-стратегии", "Передовые производственные компетенции", "Культура производственной безопасности", "Сертификация и аттестация", "Эффективный проектный менеджмент", "Управление надежностью оборудования", "Комплексное развитие руководителей", "Отраслевые технологии и эффективность"],
+        fmtOptions: ["Очно", "Онлайн", "Смешанный"],
+        agOptions: ["Руководители", "ИТР и специалисты", "Рабочие профессии"],
+        v: { ...cur, citiesText: (cur.cities || []).join(", "), agText: (cur.audienceGroups || []).join(", ") },
+        setTitle: e => this.patch(cur.id, "title", e.target.value),
+        setFullTitle: e => this.patch(cur.id, "fullTitle", e.target.value),
+        setCategory: e => this.patch(cur.id, "category", e.target.value),
+        setFormatGroup: e => this.patch(cur.id, "formatGroup", e.target.value),
+        setFormat: e => this.patch(cur.id, "format", e.target.value),
+        setDuration: e => this.patch(cur.id, "duration", e.target.value),
+        setHours: e => this.patch(cur.id, "hours", parseFloat(e.target.value) || 0),
+        setPriceNum: e => this.patch(cur.id, "priceNum", parseFloat(e.target.value) || 0),
+        setTrainerName: e => this.patch(cur.id, "trainerName", e.target.value),
+        setTrainer: e => this.patch(cur.id, "trainer", e.target.value),
+        setGoal: e => this.patch(cur.id, "goal", e.target.value),
+        setDescription: e => this.patch(cur.id, "description", e.target.value),
+        setLearn: e => this.patch(cur.id, "learn", e.target.value),
+        setProgram: e => this.patch(cur.id, "program", e.target.value),
+        setAudience: e => this.patch(cur.id, "audience", e.target.value),
+        setCities: e => this.patch(cur.id, "cities", e.target.value.split(",").map(s => s.trim()).filter(Boolean)),
+        setAudienceGroups: e => this.patch(cur.id, "audienceGroups", e.target.value.split(",").map(s => s.trim()).filter(Boolean)),
+        remove: () => this.removeCourse(cur.id),
+        reset: () => { if (!window.confirm("Вернуть исходные данные курса?")) return; const byIdMap = { ...this.state.cms.byId }; delete byIdMap[cur.id]; this.saveCms({ ...this.state.cms, byId: byIdMap }); }
+      } : null,
+      cform: this.state.cform,
+      customSent: this.state.customSent, customNotSent: !this.state.customSent,
+      onCTask: cset("task"), onCAudience: cset("audience"), onCPeople: cset("people"),
+      onCFormat: cset("format"), onCDeadline: cset("deadline"), onCName: cset("name"),
+      onCCompany: cset("company"), onCPhone: cset("phone"), onCEmail: cset("email"),
+      submitCustom: e => {
+        e.preventDefault();
+        if (this.state.sending) return;
+        const c = this.state.cform;
+        this.setState({ sending: true, sendErr: false });
+        this.sendLead("Разработка курса под заказ", {
+          "ФИО": c.name, "Телефон": c.phone, "Email": c.email, "Компания": c.company,
+          "Задача обучения": c.task, "Целевая аудитория": c.audience, "Участников": c.people,
+          "Формат": c.format, "Желаемые сроки": c.deadline
+        }, [])
+          .then(r => { this.setState({ sending: false, customSent: true, ticket: r.ticket, demoMode: r.demo }); window.scrollTo(0, 0); })
+          .catch(() => this.setState({ sending: false, sendErr: true }));
+      },
+      narrow, showAside: !narrow || this.state.filtersOpen,
+      asideStyle: narrow
+        ? "position:fixed;top:0;right:0;bottom:0;z-index:95;width:min(100%,380px);overflow:auto;background:#FFFFFF;box-shadow:-24px 0 60px rgba(8,10,14,.28);padding:24px;font-family:'Onest',system-ui,sans-serif;animation:drIn .3s cubic-bezier(.2,.85,.3,1) both"
+        : "flex:1 1 240px;max-width:300px;min-width:230px;position:sticky;top:96px;font-family:'Onest',system-ui,sans-serif",
+      openFilters: () => this.setState({ filtersOpen: true }),
+      closeFilters: () => this.setState({ filtersOpen: false }),
+      activeCount: Object.values(this.state.f).reduce((n, a) => n + a.length, 0) + (this.state.query.trim() ? 1 : 0),
+      foundCount: isCatalog ? list.length : 0, isEmpty: isCatalog && courses.length > 0 && list.length === 0,
+      query, sort, onQuery: e => this.setState({ query: e.target.value }), onSort: e => this.setState({ sort: e.target.value }),
+      resetFilters: () => this.setState({ query: "", f: { category: [], formatGroup: [], durationBucket: [], cities: [], priceBucket: [], audienceGroups: [] } }),
+      cartCount: cart.length, cartItems, cartTotal: this.money(total),
+      hasItems: cart.length > 0, noItems: cart.length === 0,
+      drawer, openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      stop: e => e.stopPropagation(),
+      form, onName: set("name"), onPhone: set("phone"), onEmail: set("email"), onCompany: set("company"), onComment: set("comment"),
+      onCity: set("city"), onPeople: set("people"), onPeriod: set("period"),
+      sent, notSent: !sent, sentItems,
+      sending: this.state.sending, sendErr: this.state.sendErr,
+      submitLabel: this.state.sending ? "Отправляем…" : "Отправить заявку",
+      customLabel: this.state.sending ? "Отправляем…" : "Отправить запрос",
+      ticket: this.state.ticket, demoMode: this.state.demoMode,
+      submit: e => {
+        e.preventDefault();
+        if (this.state.sending) return;
+        this.setState({ sending: true, sendErr: false });
+        const items = cartItems.map(i => ({ id: i.id, title: i.title }));
+        this.sendLead("Заявка на обучение", {
+          "ФИО": form.name, "Телефон": form.phone, "Email": form.email,
+          "Компания": form.company, "Город": form.city,
+          "Участников": form.people, "Желаемые сроки": form.period,
+          "Комментарий": form.comment
+        }, items)
+          .then(r => {
+            this.setState({ sending: false, sent: true, sentItems: items, ticket: r.ticket, demoMode: r.demo });
+            this.saveCart([]);
+            window.scrollTo(0, 0);
+          })
+          .catch(() => this.setState({ sending: false, sendErr: true }));
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
